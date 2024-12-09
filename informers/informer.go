@@ -1,6 +1,7 @@
 package ownInformers
 
 import (
+	"context"
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/cache"
@@ -9,19 +10,24 @@ import (
 	"time"
 )
 
-type informerManager struct {
-	clientSet         *kubernetes.Clientset
-	informerFactory   *informers.SharedInformerFactory
-	podInformer       *cache.SharedIndexInformer
-	namespaceInformer *cache.SharedIndexInformer
+type InformerManager struct {
+	clientSet              *kubernetes.Clientset
+	informerFactory        informers.SharedInformerFactory
+	podInformerStore       cache.Store
+	namespaceInformerStore cache.Store
+}
+
+func InitInformerManager() {
+	informerManager := GetInformer()
+	go informerManager.Run(context.Background())
 }
 
 var (
 	once     sync.Once
-	instance *informerManager
+	instance *InformerManager
 )
 
-func GetInformer() *informerManager {
+func GetInformer() *InformerManager {
 	once.Do(func() {
 		config, err := clientcmd.BuildConfigFromFlags("", clientcmd.RecommendedHomeFile)
 		if err != nil {
@@ -33,19 +39,24 @@ func GetInformer() *informerManager {
 		}
 
 		informerFactory := informers.NewSharedInformerFactoryWithOptions(clientSet, 100*time.Second)
-		podInformer := informerFactory.Core().V1().Pods().Informer()
-		namespaceInformer := informerFactory.Core().V1().Namespaces().Informer()
+		podInformerStore := informerFactory.Core().V1().Pods().Informer().GetStore()
+		namespaceInformerStore := informerFactory.Core().V1().Namespaces().Informer().GetStore()
 
-		instance = &informerManager{
-			clientSet:         clientSet,
-			informerFactory:   &informerFactory,
-			podInformer:       &podInformer,
-			namespaceInformer: &namespaceInformer,
+		instance = &InformerManager{
+			clientSet:              clientSet,
+			informerFactory:        informerFactory,
+			podInformerStore:       podInformerStore,
+			namespaceInformerStore: namespaceInformerStore,
 		}
 	})
 	return instance
 }
 
-func (i *informerManager) Run() {
+func (i *InformerManager) Run(ctx context.Context) {
+	i.informerFactory.Start(ctx.Done())
+	i.informerFactory.WaitForCacheSync(ctx.Done())
+}
 
+func (i *InformerManager) GetPodInformerStore() cache.Store {
+	return i.podInformerStore
 }

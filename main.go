@@ -6,8 +6,12 @@ import (
 	routes "kubernetesPanel/route"
 )
 
+type SharedService struct {
+	Data string
+}
+
 func main() {
-	go ownInformers.GetInformer()
+	ownInformers.InitInformerManager()
 
 	r := gin.Default()
 	apiGroup := r.Group("/api")
