@@ -8,4 +8,5 @@ import (
 func KubernetsRoute(router *gin.RouterGroup) {
 	router.GET("/namespace", controllers.GetNamespaceHandler)
 	router.POST("/deploymentlist", controllers.GetDeploymentHandler)
+	router.POST("/getdeploymentpods", controllers.GetDeployemntPodHandler)
 }

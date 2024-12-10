@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"kubernetesPanel/vo/Request"
@@ -44,4 +45,30 @@ func GetDeploymentHandler(c *gin.Context) {
 	}
 
 	c.JSON(200, utils.StandardResponse{}.Success(deploymentVoRes.GetName()))
+}
+
+func GetDeployemntPodHandler(c *gin.Context) {
+	var req Request.DeploynetPodListVoReq
+	err := c.ShouldBind(&req)
+	if err != nil {
+		c.JSON(200, utils.StandardResponse{}.Fail(400, err.Error(), nil))
+	}
+
+	deploymentName := req.GetDeploymentName()
+	namespaceName := req.GetNamespace()
+
+	deploymentPodList, err := ownInformers.GetInformer().GetClientSet().CoreV1().Pods(namespaceName).List(context.TODO(), metaV1.ListOptions{
+		LabelSelector: fmt.Sprintf("app=%s", deploymentName),
+	})
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(200, utils.StandardResponse{}.Fail(400, err.Error(), nil))
+	}
+	deploymentPodListVoRes := Response.DeploymentPodVoRes{}
+
+	for _, i := range deploymentPodList.Items {
+		deploymentPodListVoRes.AddName(i.Name)
+	}
+
+	c.JSON(200, utils.StandardResponse{}.Success(deploymentPodListVoRes.GetName()))
 }
