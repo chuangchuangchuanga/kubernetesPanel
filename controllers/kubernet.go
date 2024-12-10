@@ -134,9 +134,10 @@ func GetPodLogsHandler(c *gin.Context) {
 			if err != nil {
 				fmt.Println("Error reading logs:", err)
 			}
-			if n > 0 {
-				broadcast <- string(buf[:n])
-			}
+
+			fmt.Printf("log: %+v\n", n)
+			broadcast <- string(buf[:n])
+
 		}
 
 	}()
