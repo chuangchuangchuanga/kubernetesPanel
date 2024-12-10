@@ -1,17 +1,17 @@
 package Response
 
-type NamespaceVo struct {
+type NamespaceVoRes struct {
 	Name []string
 }
 
-func (n *NamespaceVo) GetName() []string {
+func (n *NamespaceVoRes) GetName() []string {
 	return n.Name
 }
 
-func (n *NamespaceVo) SetName(name []string) {
+func (n *NamespaceVoRes) SetName(name []string) {
 	n.Name = name
 }
 
-func (n *NamespaceVo) AddName(name string) {
+func (n *NamespaceVoRes) AddName(name string) {
 	n.Name = append(n.Name, name)
 }
