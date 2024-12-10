@@ -2,11 +2,17 @@ package controllers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
+	v1 "k8s.io/api/core/v1"
 	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"kubernetesPanel/vo/Request"
 	"kubernetesPanel/vo/Response"
+	"log"
+	"net/http"
+	"time"
 
 	ownInformers "kubernetesPanel/informers"
 	"kubernetesPanel/utils"
@@ -71,4 +77,70 @@ func GetDeployemntPodHandler(c *gin.Context) {
 	}
 
 	c.JSON(200, utils.StandardResponse{}.Success(deploymentPodListVoRes.GetName()))
+}
+
+func GetPodLogsHandler(c *gin.Context) {
+	var upgrader = websocket.Upgrader{
+		CheckOrigin: func(r *http.Request) bool {
+			return true // Allow all connections (you can customize this)
+		},
+	}
+
+	connect, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		c.JSON(400, utils.StandardResponse{}.Fail(400, "Upgrade failed", nil))
+		return
+	}
+	defer connect.Close()
+	var broadcast = make(chan string)
+
+	_, firstMessage, err := connect.ReadMessage()
+	if err != nil {
+		log.Println("read first message:", err)
+		return
+	}
+
+	var params map[string]string
+	if err := json.Unmarshal(firstMessage, &params); err != nil {
+		log.Println("unmarshal first message:", err)
+		return
+	}
+
+	namespace := params["namespace"]
+	podname := params["podname"]
+
+	go func() {
+		for {
+			message := <-broadcast
+			err := connect.WriteMessage(websocket.TextMessage, []byte(message))
+			if err != nil {
+				log.Println("write:", err)
+				break
+			}
+		}
+	}()
+
+	podLogs, err := ownInformers.GetInformer().GetClientSet().CoreV1().Pods(namespace).GetLogs(podname, &v1.PodLogOptions{
+		Follow: true,
+	}).Stream(context.TODO())
+	if err != nil {
+		log.Fatalf("Error in log request: %v", err)
+	}
+	defer podLogs.Close()
+	go func() {
+		buf := make([]byte, 1024)
+		for true {
+			n, err := podLogs.Read(buf)
+			if err != nil {
+				fmt.Println("Error reading logs:", err)
+			}
+			if n > 0 {
+				broadcast <- string(buf[:n])
+			}
+		}
+
+	}()
+	for true {
+		time.Sleep(10 * time.Second)
+	}
 }
