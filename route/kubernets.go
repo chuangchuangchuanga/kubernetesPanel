@@ -6,5 +6,5 @@ import (
 )
 
 func KubernetsRoute(router *gin.RouterGroup) {
-	router.GET("/namespace", controllers.GetNamespace)
+	router.GET("/namespace", controllers.GetNamespaceHandler)
 }
