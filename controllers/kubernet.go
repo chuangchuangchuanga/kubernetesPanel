@@ -138,9 +138,7 @@ func GetPodLogsHandler(c *gin.Context) {
 				fmt.Println("Error reading logs:", err)
 			}
 			broadcast <- string(buf[:n])
-
 		}
-
 	}()
 	for true {
 		time.Sleep(1000 * time.Second)
