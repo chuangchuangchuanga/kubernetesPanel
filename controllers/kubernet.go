@@ -92,7 +92,7 @@ func GetPodLogsHandler(c *gin.Context) {
 		return
 	}
 	defer connect.Close()
-	var broadcast = make(chan string)
+	var broadcast = make(chan string, 1000)
 
 	_, firstMessage, err := connect.ReadMessage()
 	if err != nil {
@@ -110,7 +110,9 @@ func GetPodLogsHandler(c *gin.Context) {
 	podname := params["podname"]
 
 	go func() {
+		i := 0
 		for {
+			i++
 			message := <-broadcast
 			err := connect.WriteMessage(websocket.TextMessage, []byte(message))
 			if err != nil {
@@ -128,20 +130,19 @@ func GetPodLogsHandler(c *gin.Context) {
 	}
 	defer podLogs.Close()
 	go func() {
-		buf := make([]byte, 1024)
+
+		buf := make([]byte, 2024)
 		for true {
 			n, err := podLogs.Read(buf)
 			if err != nil {
 				fmt.Println("Error reading logs:", err)
 			}
-
-			fmt.Printf("log: %+v\n", n)
 			broadcast <- string(buf[:n])
 
 		}
 
 	}()
 	for true {
-		time.Sleep(10 * time.Second)
+		time.Sleep(1000 * time.Second)
 	}
 }
