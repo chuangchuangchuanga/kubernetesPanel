@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 
 const DefaultLayout = () => import('@/layouts/DefaultLayout.vue');
-const DeploymentList = () => import('@/layouts/DeploymentList.vue');
+const DeploymentList = () => import('@/views/DeploymentList.vue');
 
 
 const routes = [
