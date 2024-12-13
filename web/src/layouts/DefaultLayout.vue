@@ -11,19 +11,11 @@
     <el-container>
       <el-header style="text-align: right; font-size: 12px">
         <div class="toolbar">
-          <el-dropdown>
-            <el-icon style="margin-right: 8px; margin-top: 1px">
-              <setting />
-            </el-icon>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item>View</el-dropdown-item>
-                <el-dropdown-item>Add</el-dropdown-item>
-                <el-dropdown-item>Delete</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-          <span>Tom</span>
+          <div class="flex flex-wrap gap-4 items-center">
+            <el-select v-model="deploymentSelect" placeholder="namespace" size="large" style="width: 240px">
+              <el-option v-for="item in deploymentListData" :key="item" :label="item" :value="item"/>
+            </el-select>
+          </div>
         </div>
       </el-header>
 
@@ -38,12 +30,40 @@
   </el-container>
 </template>
 
-<script lang="ts" setup>
+
+
+<script >
+import { getNamespaceList } from '@/api/api';
 
 
 
+export default {
+  name: 'DeploymentList',
+  data() {
+    return {
+      deploymentSelect : "",
+      deploymentListData : [],
+    }
+  },
 
+  methods: {
+    async getNamespaceList(){
+      try {
+        const response = await getNamespaceList();
+        this.deploymentListData = response.data.data;
+        console.log("1111", response.data.data);
+      }catch (error) {
+        console.log(error);
+      }
+    }
+  },
+  mounted() {
+    this.getNamespaceList();
+
+  }
+}
 </script>
+
 
 <style scoped>
 .layout-container-demo .el-header {
