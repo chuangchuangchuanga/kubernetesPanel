@@ -12,7 +12,7 @@
       <el-header style="text-align: right; font-size: 12px">
         <div class="toolbar">
           <div class="flex flex-wrap gap-4 items-center">
-            <el-select v-model="deploymentSelect" placeholder="namespace" size="large" style="width: 240px">
+            <el-select v-model="deploymentSelect" placeholder="namespace" size="large" @change="namespaceSelectEvent"  style="width: 240px">
               <el-option v-for="item in deploymentListData" :key="item" :label="item" :value="item"/>
             </el-select>
           </div>
@@ -34,32 +34,39 @@
 
 <script >
 import { getNamespaceList } from '@/api/api';
+import { namespaceSelectStore } from "@/stores/namespaceSelect.js";
 
 
+const useNamespaceSelect1 = namespaceSelectStore();
 
 export default {
   name: 'DeploymentList',
   data() {
     return {
-      deploymentSelect : "",
+      deploymentSelect : '',
       deploymentListData : [],
     }
   },
 
   methods: {
+    namespaceSelectEvent(value){
+      useNamespaceSelect1.changeSelectedNamespace(value);
+    },
+
     async getNamespaceList(){
       try {
         const response = await getNamespaceList();
         this.deploymentListData = response.data.data;
-        console.log("1111", response.data.data);
       }catch (error) {
         console.log(error);
       }
     }
   },
   mounted() {
+    this.deploymentSelect = useNamespaceSelect1.selectedNamespace;
+    console.log("mounted拿到的namespace",useNamespaceSelect1.selectedNamespace);
+    // 赋值给 data 中的 deploymentSelect
     this.getNamespaceList();
-
   }
 }
 </script>
