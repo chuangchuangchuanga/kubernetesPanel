@@ -11,8 +11,9 @@
     <el-container>
       <el-header style="text-align: right; font-size: 12px">
         <div class="toolbar">
+          <div>NameSpace:</div>
           <div class="flex flex-wrap gap-4 items-center">
-            <el-select v-model="deploymentSelect" placeholder="namespace"   remote-method size="large" @change="namespaceSelectEvent"  style="width: 240px">
+            <el-select v-model="deploymentSelect" placeholder="namespace"  size="large" @change="namespaceSelectEvent"  style="width: 240px">
               <el-option v-for="item in deploymentListData" :key="item" :label="item" :value="item"/>
             </el-select>
           </div>

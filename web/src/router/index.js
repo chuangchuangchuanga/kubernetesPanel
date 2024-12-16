@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 const DefaultLayout = () => import('@/layouts/DefaultLayout.vue');
 const DeploymentList = () => import('@/views/DeploymentList.vue');
+const podLogPage = () => import('@/views/podLogPage.vue');
 
 
 const routes = [
@@ -17,7 +18,13 @@ const routes = [
             meta: { title: "DeploymentList" },
         },
         ]
+    },
+    {
+        path: "/logpage",
+        name: "podLogPage",
+        component: podLogPage,
     }
+
 ]
 
 const router = createRouter({

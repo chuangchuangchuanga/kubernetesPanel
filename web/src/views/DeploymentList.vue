@@ -19,7 +19,11 @@
   >
     <el-table :data="deploymentPodList" style="width: 100%">
       <el-table-column prop="Name" label="PodName" width="280" />
-      <el-table-column prop="address" label="动作" />
+      <el-table-column prop="address" label="动作" >
+        <template #default="scope">
+        <el-button link type="primary" size="small" @click="goToLogPage(scope.row)">查看日志</el-button>
+          </template>
+      </el-table-column>
     </el-table>
 
     <template #footer>
@@ -48,6 +52,17 @@ export default {
     }
   },
   methods: {
+    goToLogPage(row) {
+      const  url = this.$router.resolve({
+        name: "podLogPage",
+        query: {
+          "podName": row.Name,
+          "nameSpace": namespaceSelectStore().selectedNamespace,
+        }
+      }).href
+      window.open(url, '_blank');
+    },
+
     async clickDeploymentPodList(row) {
       this.podListdialogVisible = true;
       try {
