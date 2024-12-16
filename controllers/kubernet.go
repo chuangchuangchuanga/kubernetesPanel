@@ -150,3 +150,36 @@ func GetPodLogsHandler(c *gin.Context) {
 		time.Sleep(1000 * time.Second)
 	}
 }
+
+func RestartDeploymentHandler(c *gin.Context) {
+	var req Request.DeploymentRestartVoReq
+	err := c.ShouldBind(&req)
+	if err != nil {
+		c.JSON(200, utils.StandardResponse{}.Fail(400, err.Error(), nil))
+		return
+	}
+
+	namespace := req.GetNamespace()
+	deploymentName := req.GetDeploymentName()
+	deploymentClient := ownInformers.GetInformer().GetClientSet().AppsV1().Deployments(namespace)
+	deployment, err := deploymentClient.Get(context.TODO(), deploymentName, metaV1.GetOptions{})
+
+	if err != nil {
+		c.JSON(200, utils.StandardResponse{}.Fail(400, err.Error(), nil))
+		return
+	}
+	if deployment.Spec.Template.Annotations == nil {
+		deployment.Spec.Template.Annotations = make(map[string]string)
+	}
+	deployment.Spec.Template.Annotations["kubectl.kubernetes.io/restartedAt"] = time.Now().Format(time.RFC3339)
+
+	_, err = deploymentClient.Update(context.TODO(), deployment, metaV1.UpdateOptions{})
+	if err != nil {
+		c.JSON(200, utils.StandardResponse{}.Fail(400, err.Error(), nil))
+		return
+	}
+
+	c.JSON(200, utils.StandardResponse{}.Success(nil))
+	return
+
+}

@@ -10,4 +10,5 @@ func KubernetsRoute(router *gin.RouterGroup) {
 	router.POST("/deploymentlist", controllers.GetDeploymentHandler)
 	router.POST("/getdeploymentpods", controllers.GetDeployemntPodHandler)
 	router.GET("/getpodlogs", controllers.GetPodLogsHandler)
+	router.POST("/deploymentrestart", controllers.RestartDeploymentHandler)
 }

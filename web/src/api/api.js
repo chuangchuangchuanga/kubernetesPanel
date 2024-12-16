@@ -21,3 +21,15 @@ export function getDeploymentList(data){
 }
 
 
+export function postRestartDeployment(data){
+    return service({
+        url: "/deploymentrestart",
+        method: "POST",
+        data: data,
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+}
+
+

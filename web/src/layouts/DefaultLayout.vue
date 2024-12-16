@@ -51,6 +51,7 @@ export default {
   methods: {
     namespaceSelectEvent(value){
       useNamespaceSelect1.changeSelectedNamespace(value);
+      window.location.reload();
     },
 
     async getNamespaceList(){
@@ -67,6 +68,7 @@ export default {
     console.log("mounted拿到的namespace",useNamespaceSelect1.selectedNamespace);
     // 赋值给 data 中的 deploymentSelect
     this.getNamespaceList();
+
   }
 }
 </script>
