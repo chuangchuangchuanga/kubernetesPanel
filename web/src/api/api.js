@@ -9,4 +9,15 @@ export function getNamespaceList() {
     })
 }
 
+export function getDeploymentList(data){
+    return service({
+        url: "/deploymentlist",
+        method: "POST",
+        data: data,
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+}
+
 

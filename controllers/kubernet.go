@@ -30,6 +30,7 @@ func GetNamespaceHandler(c *gin.Context) {
 	}
 
 	c.JSON(200, utils.StandardResponse{}.Success(namespaceVo.GetName()))
+	return
 }
 
 func GetDeploymentHandler(c *gin.Context) {
@@ -37,20 +38,22 @@ func GetDeploymentHandler(c *gin.Context) {
 	err := c.ShouldBind(&req)
 	if err != nil {
 		c.JSON(200, utils.StandardResponse{}.Fail(400, err.Error(), nil))
+		return
 	}
 
 	namespace := req.GetNamespace()
 	deploymentList, err := ownInformers.GetInformer().GetClientSet().AppsV1().Deployments(namespace).List(context.TODO(), metaV1.ListOptions{})
 	deploymentitems := deploymentList.Items
-	deploymentVoRes := Response.DeploymentVoRes{}
+	var deploymentVoRes []Response.DeploymentVoRes
 	for _, i := range deploymentitems {
-		deploymentVoRes.AddName(i.Name)
+		deploymentVoRes = append(deploymentVoRes, Response.DeploymentVoRes{Name: i.Name, Namespace: namespace})
 	}
 	if err != nil {
 		panic(err)
 	}
 
-	c.JSON(200, utils.StandardResponse{}.Success(deploymentVoRes.GetName()))
+	c.JSON(200, utils.StandardResponse{}.Success(deploymentVoRes))
+	return
 }
 
 func GetDeployemntPodHandler(c *gin.Context) {
@@ -58,6 +61,7 @@ func GetDeployemntPodHandler(c *gin.Context) {
 	err := c.ShouldBind(&req)
 	if err != nil {
 		c.JSON(200, utils.StandardResponse{}.Fail(400, err.Error(), nil))
+		return
 	}
 
 	deploymentName := req.GetDeploymentName()
@@ -69,6 +73,7 @@ func GetDeployemntPodHandler(c *gin.Context) {
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(200, utils.StandardResponse{}.Fail(400, err.Error(), nil))
+		return
 	}
 	deploymentPodListVoRes := Response.DeploymentPodVoRes{}
 
@@ -77,6 +82,7 @@ func GetDeployemntPodHandler(c *gin.Context) {
 	}
 
 	c.JSON(200, utils.StandardResponse{}.Success(deploymentPodListVoRes.GetName()))
+	return
 }
 
 func GetPodLogsHandler(c *gin.Context) {

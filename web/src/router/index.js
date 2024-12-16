@@ -12,7 +12,7 @@ const routes = [
         children: [
             {
             path: "deployments/list",
-            name: "DeploymentList",
+            name: "DeploymentLists",
             component: DeploymentList,
             meta: { title: "DeploymentList" },
         },
