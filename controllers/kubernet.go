@@ -75,13 +75,14 @@ func GetDeployemntPodHandler(c *gin.Context) {
 		c.JSON(200, utils.StandardResponse{}.Fail(400, err.Error(), nil))
 		return
 	}
-	deploymentPodListVoRes := Response.DeploymentPodVoRes{}
+	deploymentPodListVoRes := []Response.DeploymentPodVoRes{}
 
 	for _, i := range deploymentPodList.Items {
-		deploymentPodListVoRes.AddName(i.Name)
+		deploymentPodListVoRes = append(deploymentPodListVoRes, Response.DeploymentPodVoRes{Name: i.Name})
+
 	}
 
-	c.JSON(200, utils.StandardResponse{}.Success(deploymentPodListVoRes.GetName()))
+	c.JSON(200, utils.StandardResponse{}.Success(deploymentPodListVoRes))
 	return
 }
 

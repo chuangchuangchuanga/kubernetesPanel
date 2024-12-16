@@ -32,4 +32,15 @@ export function postRestartDeployment(data){
     })
 }
 
+export function getDeploymentPodList(data){
+    return service({
+        url: "/getdeploymentpods",
+        method: "POST",
+        data: data,
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+}
+
 
