@@ -67,8 +67,20 @@ func GetDeployemntPodHandler(c *gin.Context) {
 	deploymentName := req.GetDeploymentName()
 	namespaceName := req.GetNamespace()
 
+	deployment, err := ownInformers.GetInformer().GetClientSet().AppsV1().Deployments(namespaceName).Get(context.TODO(), deploymentName, metaV1.GetOptions{})
+	if err != nil {
+		panic(err)
+	}
+	labelSelector := ""
+	for key, value := range deployment.Spec.Template.GetLabels() {
+		if labelSelector != "" {
+			labelSelector += ","
+		}
+		labelSelector += fmt.Sprintf("%s=%s", key, value)
+	}
+
 	deploymentPodList, err := ownInformers.GetInformer().GetClientSet().CoreV1().Pods(namespaceName).List(context.TODO(), metaV1.ListOptions{
-		LabelSelector: fmt.Sprintf("app=%s", deploymentName),
+		LabelSelector: labelSelector,
 	})
 	if err != nil {
 		fmt.Println(err)
@@ -137,7 +149,6 @@ func GetPodLogsHandler(c *gin.Context) {
 	}
 	defer podLogs.Close()
 	go func() {
-
 		buf := make([]byte, 2024)
 		for true {
 			n, err := podLogs.Read(buf)

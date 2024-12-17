@@ -20,7 +20,7 @@ const routes = [
         ]
     },
     {
-        path: "/logpage",
+        path: "/getpodlogs",
         name: "podLogPage",
         component: podLogPage,
     }
