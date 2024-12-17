@@ -1,34 +1,39 @@
+
 <template>
-  <div ref="scroller">
-    <DynamicScroller :items="messages"  :item-size="itemSize" >
-      <template #default="{ item, index }">
-        <div class="item" >
-          <h3>{{ index }}</h3>
-          <p >{{ item }}</p>
-          <el-divider />
-        </div>
+    <DynamicScroller :items="messages"  :item-size="itemSize"  :min-item-size="54"  class="scroller">
+      <template v-slot="{ item, index }">
+        <DynamicScrollerItem
+            :item="item"
+            :active="active"
+            :size-dependencies="[item,]" :data-index="index" >
+          <div v-html="item"></div>
+        </DynamicScrollerItem>
       </template>
     </DynamicScroller>
-  </div>
 </template>
 
 
-<script>
 
+
+
+
+
+
+
+<script>
+import { AnsiUp } from 'ansi_up';
 
 export default {
-
-
-
   name: "podLogPage",
   data() {
     return {
       socket: null, // WebSocket 实例
       messages: [],
-      itemSize: 50,
+      itemSize: 100,
     };
   },
   methods: {
+
     scrollToBottom() {
       this.$nextTick(() => {
         window.scrollTo(0, document.body.scrollHeight);
@@ -42,12 +47,12 @@ export default {
       const namespace = urlParams.get('nameSpace');
       const podname = urlParams.get('podName');
 
-
+      const ansi_up = new AnsiUp();
       // 监听消息事件
       this.socket.onmessage = (event) => {
-        console.log(event.data)
         const  data = JSON.parse(JSON.stringify(event.data));
-        this.messages.push(data)
+        this.messages.push(ansi_up.ansi_to_html(data))
+
         this.scrollToBottom()
       };
 
@@ -86,4 +91,9 @@ export default {
 }
 </script>
 
-
+<style>
+.scroller-container {
+  height: auto; /* 设置一个固定的高度 */
+  overflow-y: auto; /* 启用垂直滚动 */
+}
+</style>
