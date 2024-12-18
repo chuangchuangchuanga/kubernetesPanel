@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -98,27 +99,35 @@ func GetDeployemntPodHandler(c *gin.Context) {
 	return
 }
 
+// GetPodLogsHandler 处理 Pod 日志的 WebSocket 请求
+// 该函数通过 WebSocket 提供 Pod 的实时日志流
 func GetPodLogsHandler(c *gin.Context) {
+	// 创建一个允许所有来源的 WebSocket Upgrader
 	var upgrader = websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
 			return true // Allow all connections (you can customize this)
 		},
 	}
 
+	// 将 HTTP 连接升级为 WebSocket 连接
 	connect, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		c.JSON(400, utils.StandardResponse{}.Fail(400, "Upgrade failed", nil))
 		return
 	}
 	defer connect.Close()
+
+	// 创建一个广播通道，用于发送日志消息
 	var broadcast = make(chan string, 1000)
 
+	// 读取客户端发送的第一个消息，该消息包含 Pod 的命名空间和名称
 	_, firstMessage, err := connect.ReadMessage()
 	if err != nil {
 		log.Println("read first message:", err)
 		return
 	}
 
+	// 解析第一个消息，获取 Pod 的命名空间和名称
 	var params map[string]string
 	if err := json.Unmarshal(firstMessage, &params); err != nil {
 		log.Println("unmarshal first message:", err)
@@ -128,10 +137,9 @@ func GetPodLogsHandler(c *gin.Context) {
 	namespace := params["namespace"]
 	podname := params["podname"]
 
+	// 启动一个 goroutine，用于将广播通道中的日志消息写入 WebSocket 连接
 	go func() {
-		i := 0
 		for {
-			i++
 			message := <-broadcast
 			err := connect.WriteMessage(websocket.TextMessage, []byte(message))
 			if err != nil {
@@ -141,6 +149,7 @@ func GetPodLogsHandler(c *gin.Context) {
 		}
 	}()
 
+	// 获取 Pod 的日志流
 	podLogs, err := ownInformers.GetInformer().GetClientSet().CoreV1().Pods(namespace).GetLogs(podname, &v1.PodLogOptions{
 		Follow: true,
 	}).Stream(context.TODO())
@@ -148,16 +157,26 @@ func GetPodLogsHandler(c *gin.Context) {
 		log.Fatalf("Error in log request: %v", err)
 	}
 	defer podLogs.Close()
+
+	// 启动一个 goroutine，用于读取 Pod 日志流的每一行，并将其发送到广播通道
 	go func() {
-		buf := make([]byte, 2024)
-		for true {
-			n, err := podLogs.Read(buf)
-			if err != nil {
-				fmt.Println("Error reading logs:", err)
+		scanner := bufio.NewScanner(podLogs) // 使用 Scanner 逐行读取
+		for scanner.Scan() {
+			if scanner.Scan() {
+				fmt.Println(scanner.Text())
+				// 将每一行日志发送到 broadcast 通道
+				broadcast <- scanner.Text()
+			} else {
+				// 如果没有更多数据，检查是否到达流末尾
+				if err := scanner.Err(); err != nil {
+					fmt.Println("Error reading logs:", err)
+				}
+				break // 结束循环
 			}
-			broadcast <- string(buf[:n])
 		}
 	}()
+
+	// 保持函数运行，以维持 WebSocket 连接
 	for true {
 		time.Sleep(1000 * time.Second)
 	}

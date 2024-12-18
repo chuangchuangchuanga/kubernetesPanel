@@ -1,20 +1,25 @@
 
 <template>
-    <DynamicScroller :items="messages"  :item-size="itemSize"  :min-item-size="54"  class="scroller">
-      <template v-slot="{ item, index }">
-        <DynamicScrollerItem
-            :item="item"
-            :active="active"
-            :size-dependencies="[item,]" :data-index="index" >
-          <div v-html="item"></div>
-        </DynamicScrollerItem>
-      </template>
-    </DynamicScroller>
+  <DynamicScroller
+      :items="messages"
+      :min-item-size="54"
+      class="scroller"
+  >
+    <template v-slot="{ item, index }">
+      <DynamicScrollerItem
+          :item="item"
+          :active="active"
+          :size-dependencies="[
+          item,
+        ]"
+          :data-index="index"
+      >
+
+        <div class="text">{{index}}-{{ item }}</div>
+      </DynamicScrollerItem>
+    </template>
+  </DynamicScroller>
 </template>
-
-
-
-
 
 
 
@@ -24,12 +29,17 @@
 import { AnsiUp } from 'ansi_up';
 
 export default {
+  props: {
+    messages: Array,
+  },
+
   name: "podLogPage",
   data() {
     return {
       socket: null, // WebSocket 实例
       messages: [],
       itemSize: 100,
+      id: 0
     };
   },
   methods: {
@@ -52,9 +62,9 @@ export default {
       this.socket.onmessage = (event) => {
         const  data = JSON.parse(JSON.stringify(event.data));
         this.messages.push(ansi_up.ansi_to_html(data))
-
         this.scrollToBottom()
       };
+
 
       // 监听连接打开事件
       this.socket.onopen = () => {
@@ -91,9 +101,3 @@ export default {
 }
 </script>
 
-<style>
-.scroller-container {
-  height: auto; /* 设置一个固定的高度 */
-  overflow-y: auto; /* 启用垂直滚动 */
-}
-</style>
