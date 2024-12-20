@@ -14,11 +14,11 @@
           :active="active"
           :data-active="active"
           :size-dependencies="[
-          item.message,
+          item,
         ]"
           :data-index="index"
       >
-        <div class="message" v-html="item.message" :style="{ height: calculateHeight(item) + 'px' }"></div>
+        <div class="message" v-html="item.message" ></div>
       </DynamicScrollerItem>
     </template>
   </DynamicScroller>
@@ -132,7 +132,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100vh; /* 父容器高度 */
-  background-color: RGB(0,0,0);
+  background-color: RGB(67,67,67);
 }
 
 .scroller {
