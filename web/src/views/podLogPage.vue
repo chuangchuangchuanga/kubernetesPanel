@@ -3,9 +3,10 @@
   <div class="container">
   <DynamicScroller
       :items="messages"
-      :min-item-size="10"
+      :min-item-size="30"
       class="scroller"
-      :max-visible-items="200"
+      :max-visible-items="100"
+      :item-size="30"
   >
     <template #default="{ item, index, active }">
       <DynamicScrollerItem class="message"
@@ -13,12 +14,11 @@
           :active="active"
           :data-active="active"
           :size-dependencies="[
-          item,
+          item.message,
         ]"
           :data-index="index"
       >
-
-        <div class="text" v-html="item.message"></div>
+        <div class="message" v-html="item.message" :style="{ height: calculateHeight(item) + 'px' }"></div>
       </DynamicScrollerItem>
     </template>
   </DynamicScroller>
@@ -52,7 +52,12 @@ export default {
     };
   },
   methods: {
-
+    calculateHeight(item) {
+      // 计算项目高度的逻辑，这里假设 item.message 的长度影响高度
+      const baseHeight = 30;
+      const additionalHeight = item.message.length > 100 ? 20 : 0;
+      return baseHeight + additionalHeight;
+    },
     handleWebSocketMessage(data) {
       const messageWithId = {
         id: Date.now(),  // 使用时间戳作为唯一ID
@@ -122,22 +127,21 @@ export default {
 </script>
 
 <style scoped>
+
 .container {
   display: flex;
   flex-direction: column;
   height: 100vh; /* 父容器高度 */
+  background-color: RGB(0,0,0);
 }
 
 .scroller {
-  flex: 1; /* 让 scroller 充满父容器 */
+  flex:  1; /* 让 scroller 充满父容器 */
   overflow-y: auto; /* 设置 overflow-y 为 auto */
   border: solid 1px #42b983;
 }
 
-.message{
-  display: flex;
-  min-height: 32px;
-  padding: 12px;
-  box-sizing: border-box;
+.message  span {
+  color: #ffffff !important;
 }
 </style>
