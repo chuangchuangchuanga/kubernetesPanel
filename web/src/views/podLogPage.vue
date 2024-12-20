@@ -3,10 +3,9 @@
   <div class="container">
   <DynamicScroller
       :items="messages"
-      :min-item-size="30"
+      :min-item-size="20"
       class="scroller"
       :max-visible-items="100"
-      :item-size="30"
   >
     <template #default="{ item, index, active }">
       <DynamicScrollerItem class="message"
@@ -16,7 +15,7 @@
           :size-dependencies="[
           item,
         ]"
-          :data-index="index"
+          :data-index="item.id"
       >
         <div class="message" v-html="item.message" ></div>
       </DynamicScrollerItem>
@@ -52,28 +51,16 @@ export default {
     };
   },
   methods: {
-    calculateHeight(item) {
-      // 计算项目高度的逻辑，这里假设 item.message 的长度影响高度
-      const baseHeight = 30;
-      const additionalHeight = item.message.length > 100 ? 20 : 0;
-      return baseHeight + additionalHeight;
-    },
+   
+
     handleWebSocketMessage(data) {
       const messageWithId = {
         id: Date.now(),  // 使用时间戳作为唯一ID
         message: data,    // 原始消息内容
       };
 
+      this.messages.push(messageWithId);
 
-      this.messageBuffer.push(messageWithId);  // 将新消息推入缓冲区
-
-      if (this.bufferTimeout) {
-        clearTimeout(this.bufferTimeout);  // 清除之前的定时器
-      }
-      this.bufferTimeout = setTimeout(() => {
-        this.messages.push(...this.messageBuffer);  // 将缓冲区的消息批量推送到 messages
-        this.messageBuffer = [];  // 清空缓冲区
-      }, 50);
     },
 
     connectWebSocket() {
@@ -143,5 +130,7 @@ export default {
 
 .message  span {
   color: #ffffff !important;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
 }
 </style>
