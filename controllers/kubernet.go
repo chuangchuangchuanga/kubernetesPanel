@@ -91,7 +91,11 @@ func GetDeployemntPodHandler(c *gin.Context) {
 	deploymentPodListVoRes := []Response.DeploymentPodVoRes{}
 
 	for _, i := range deploymentPodList.Items {
-		deploymentPodListVoRes = append(deploymentPodListVoRes, Response.DeploymentPodVoRes{Name: i.Name, Status: string(i.Status.Phase)})
+		deploymentPodListVoRes = append(deploymentPodListVoRes, Response.DeploymentPodVoRes{
+			Name:       i.Name,
+			Status:     string(i.Status.Phase),
+			CreateTime: i.CreationTimestamp.Format("2006-01-02 15:04:05"),
+		})
 
 	}
 

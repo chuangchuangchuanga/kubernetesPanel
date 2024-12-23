@@ -1,8 +1,9 @@
 package Response
 
 type DeploymentPodVoRes struct {
-	Name   string
-	Status string
+	Name       string
+	Status     string
+	CreateTime string
 }
 
 func (d *DeploymentPodVoRes) GetName() string {

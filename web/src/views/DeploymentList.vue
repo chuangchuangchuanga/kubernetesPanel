@@ -18,12 +18,12 @@
       width="800"
   >
     <el-table :data="deploymentPodList" style="width: 100%">
-      <el-table-column prop="Name" label="PodName" width="280" />
-      <el-table-column prop="Status" label="状态" width="280" />
-
+      <el-table-column prop="Name" label="PodName"  />
+      <el-table-column prop="Status" label="状态" width="100"/>
+      <el-table-column prop="CreateTime" label="创建时间"  />
       <el-table-column prop="address" label="动作" >
         <template #default="scope">
-        <el-button link type="primary" size="small" @click="goToLogPage(scope.row)">查看日志</el-button>
+        <el-button v-if="scope.row.Status !== 'Pending'" link type="primary" size="small" @click="goToLogPage(scope.row)">查看日志</el-button>
           </template>
       </el-table-column>
     </el-table>
