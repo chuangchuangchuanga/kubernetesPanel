@@ -5,6 +5,7 @@
       :items="messages"
       :min-item-size="20"
       class="scroller"
+      id="scroller"
   >
     <template #default="{ item, index, active }">
       <DynamicScrollerItem
@@ -22,10 +23,13 @@
     </template>
   </DynamicScroller>
 
-    <el-button
-        class="floating-button"
-        type="primary">
-      <el-icon><Lock /></el-icon>
+
+    <el-button class="floating-button" type="primary" @click="changeAutoScroll">
+
+      <el-icon v-if="autoScroll===false">
+        <Lock />
+      </el-icon>
+      <el-icon v-else-if="autoScroll===true"><Unlock /></el-icon>
       滚动
     </el-button>
   </div>
@@ -51,26 +55,38 @@ export default {
       socket: null, // WebSocket 实例
       messages: [],
       id: 0,
+      autoScroll: true,
     };
   },
   methods: {
+    changeAutoScroll() {
+      this.autoScroll = !this.autoScroll;
+      if (this.autoScroll) {
+        this.scrollToBottom()
+      }
+    },
+
     handleWebSocketMessage(data) {
       const messageWithId = {
         id: Date.now(),  // 使用时间戳作为唯一ID
         message: data,    // 原始消息内容
       };
       this.messages.push(messageWithId);
-      this.scrollToBottom()
+      if (this.messages.length >= 1000) {
+        // 如果数组长度大于等于1000，移除最旧的一条消息
+        this.messages.shift();
+      }
+      if (this.autoScroll===true) {
+        this.scrollToBottom()
+      }
+
     },
 
 
-    scrollToBottom()
-      {
-        const scroller = this.$refs.scroller
-        if (scroller) {
-          const lastIndex = this.items.length - 1
-          scroller.scrollToItem(lastIndex)
-        }
+    scrollToBottom(){
+      var scrollableDiv = document.getElementById('scroller');
+      // 将元素滚动到底部
+      scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
     },
 
     connectWebSocket() {

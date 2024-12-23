@@ -150,8 +150,10 @@ func GetPodLogsHandler(c *gin.Context) {
 	}()
 
 	// 获取 Pod 的日志流
+	tailLines := int64(1000)
 	podLogs, err := ownInformers.GetInformer().GetClientSet().CoreV1().Pods(namespace).GetLogs(podname, &v1.PodLogOptions{
-		Follow: true,
+		TailLines: &tailLines,
+		Follow:    true,
 	}).Stream(context.TODO())
 	if err != nil {
 		log.Fatalf("Error in log request: %v", err)
