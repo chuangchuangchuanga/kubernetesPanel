@@ -150,7 +150,7 @@ func GetPodLogsHandler(c *gin.Context) {
 	}()
 
 	// 获取 Pod 的日志流
-	tailLines := int64(1000)
+	tailLines := int64(2000)
 	podLogs, err := ownInformers.GetInformer().GetClientSet().CoreV1().Pods(namespace).GetLogs(podname, &v1.PodLogOptions{
 		TailLines: &tailLines,
 		Follow:    true,
