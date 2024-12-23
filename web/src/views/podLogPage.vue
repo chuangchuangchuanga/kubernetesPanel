@@ -3,12 +3,12 @@
   <div class="container">
   <DynamicScroller
       :items="messages"
-      :min-item-size="10"
+      :min-item-size="20"
       class="scroller"
   >
     <template #default="{ item, index, active }">
       <DynamicScrollerItem
-          class="message1"
+          class="scroller-item"
           :item="item"
           :data-active="active"
           :active="active"
@@ -16,11 +16,21 @@
           :size-dependencies="[
             item.message,
           ]">
-        <div class="message" >{{item.message}}</div>
+        <div class="message"  v-html="item.message"></div>
+
       </DynamicScrollerItem>
     </template>
   </DynamicScroller>
-    </div>
+
+    <el-button
+        class="floating-button"
+        type="primary">
+      <el-icon><Lock /></el-icon>
+      滚动
+    </el-button>
+  </div>
+
+
 </template>
 
 
@@ -49,9 +59,18 @@ export default {
         id: Date.now(),  // 使用时间戳作为唯一ID
         message: data,    // 原始消息内容
       };
-
       this.messages.push(messageWithId);
+      this.scrollToBottom()
+    },
 
+
+    scrollToBottom()
+      {
+        const scroller = this.$refs.scroller
+        if (scroller) {
+          const lastIndex = this.items.length - 1
+          scroller.scrollToItem(lastIndex)
+        }
     },
 
     connectWebSocket() {
@@ -108,18 +127,23 @@ export default {
 
 .container {
   display: flex;
-  overflow: hidden;
   flex-direction: column;
-  height: 100vh;; /* 父容器高度 */
+  height: 100vh; /* 父容器高度 */
   background-color: RGB(67,67,67);
+  overflow-y: auto;
 }
 
 .scroller {
-  height: 100vh;
-  flex:  1; /* 让 scroller 充满父容器 */
+  flex: auto 1 1 ;
   overflow-y: auto; /* 设置 overflow-y 为 auto */
   border: solid 1px #42b983;
 }
 
+.floating-button {
+  position: fixed;
+  right: 20px;
+  bottom: 80px;
+  z-index: 9999;
+}
 
 </style>
