@@ -3,21 +3,20 @@
   <div class="container">
   <DynamicScroller
       :items="messages"
-      :min-item-size="20"
+      :min-item-size="10"
       class="scroller"
-      :max-visible-items="100"
   >
     <template #default="{ item, index, active }">
-      <DynamicScrollerItem class="message"
+      <DynamicScrollerItem
+          class="message1"
           :item="item"
-          :active="active"
           :data-active="active"
-          :size-dependencies="[
-          item,
-        ]"
+          :active="active"
           :data-index="item.id"
-      >
-        <div class="message" v-html="item.message" ></div>
+          :size-dependencies="[
+            item.message,
+          ]">
+        <div class="message" >{{item.message}}</div>
       </DynamicScrollerItem>
     </template>
   </DynamicScroller>
@@ -26,33 +25,25 @@
 
 
 
-
-
 <script>
 import { AnsiUp } from 'ansi_up';
 
 export default {
+  name: "podLogPage",
   props: {
-    messages: {
-      type: Array,
-      default: () => [],
+    active: {
+      type: Boolean,
+      required: true
     },
   },
-
-  name: "podLogPage",
   data() {
     return {
-      messageBuffer: [],
       socket: null, // WebSocket 实例
       messages: [],
-      itemSize: 100,
       id: 0,
-      minItemSize: 5,
     };
   },
   methods: {
-   
-
     handleWebSocketMessage(data) {
       const messageWithId = {
         id: Date.now(),  // 使用时间戳作为唯一ID
@@ -117,20 +108,18 @@ export default {
 
 .container {
   display: flex;
+  overflow: hidden;
   flex-direction: column;
-  height: 100vh; /* 父容器高度 */
+  height: 100vh;; /* 父容器高度 */
   background-color: RGB(67,67,67);
 }
 
 .scroller {
+  height: 100vh;
   flex:  1; /* 让 scroller 充满父容器 */
   overflow-y: auto; /* 设置 overflow-y 为 auto */
   border: solid 1px #42b983;
 }
 
-.message  span {
-  color: #ffffff !important;
-  padding: 10px;
-  border-bottom: 1px solid #ccc;
-}
+
 </style>

@@ -91,7 +91,7 @@ func GetDeployemntPodHandler(c *gin.Context) {
 	deploymentPodListVoRes := []Response.DeploymentPodVoRes{}
 
 	for _, i := range deploymentPodList.Items {
-		deploymentPodListVoRes = append(deploymentPodListVoRes, Response.DeploymentPodVoRes{Name: i.Name})
+		deploymentPodListVoRes = append(deploymentPodListVoRes, Response.DeploymentPodVoRes{Name: i.Name, Status: string(i.Status.Phase)})
 
 	}
 
