@@ -2,10 +2,15 @@ package ownInformers
 
 import (
 	"context"
+	"flag"
+	"fmt"
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/tools/clientcmd"
+	"os"
+	"path/filepath"
 	"sync"
 	"time"
 )
@@ -30,7 +35,25 @@ var (
 
 func GetInformer() *InformerManager {
 	once.Do(func() {
-		config, err := clientcmd.BuildConfigFromFlags("", clientcmd.RecommendedHomeFile)
+		var kubeconfig *string
+		if home := homeDir(); home != "" {
+			kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
+		} else {
+			kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+		}
+		flag.Parse()
+
+		// 尝试使用集群内配置
+		config, err := rest.InClusterConfig()
+		if err != nil {
+			// 集群内配置失败，尝试使用本地 kubeconfig 文件
+			config, err = clientcmd.BuildConfigFromFlags("", *kubeconfig)
+			if err != nil {
+				fmt.Printf("Error building kubeconfig: %s\n", err.Error())
+				os.Exit(1)
+			}
+		}
+
 		if err != nil {
 			panic(err)
 		}
@@ -70,4 +93,12 @@ func (i *InformerManager) GetDeploymentInformerStore() cache.Store {
 
 func (i *InformerManager) GetClientSet() *kubernetes.Clientset {
 	return i.clientSet
+}
+
+// 获取用户主目录路径
+func homeDir() string {
+	if h := os.Getenv("HOME"); h != "" {
+		return h
+	}
+	return os.Getenv("USERPROFILE") // windows
 }
