@@ -2,8 +2,15 @@
   <el-container class="layout-container-demo" >
     <el-aside width="200px">
       <el-scrollbar>
-        <el-menu :default-openeds="['1', '3']">
-              <el-menu-item index="2-2">Option 2</el-menu-item>
+        <div class="logo">
+          <router-link :to="{name: 'Kubernetes'}">
+            <img class="logoStyle" src="../assets/logo.png"></img>
+          </router-link>
+        </div>
+        <el-menu>
+          <router-link :to="{ name: 'DeploymentLists' }">
+              <el-menu-item index="2" >Deployment</el-menu-item>
+          </router-link>
         </el-menu>
       </el-scrollbar>
     </el-aside>
@@ -97,5 +104,12 @@ export default {
   justify-content: center;
   height: 100%;
   right: 20px;
+}
+
+.logo{
+  height: 60px;
+}
+a {
+  text-decoration: none;
 }
 </style>
