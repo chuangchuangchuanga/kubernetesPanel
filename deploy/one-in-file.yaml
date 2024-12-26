@@ -36,7 +36,7 @@ spec:
       protocol: TCP
       targetPort: 8080
   selector:
-    app: k8sPanel
+    app: k8s-panel
 ---
 apiVersion: v1
 kind: ServiceAccount
