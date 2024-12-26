@@ -14,6 +14,6 @@ RUN  go build -o server .
 FROM alpine:3.21.0
 WORKDIR /app
 COPY --from=web_builder /app/web/dist  /app/web
-COPY --from=go_builder /app/server /app/server
+COPY --from=go_builder /app/server /app/
 
 CMD ["/app/server"]
