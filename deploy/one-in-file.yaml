@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-panel
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8sPanel
+  template:
+    metadata:
+      labels:
+        app: k8sPanel
+    spec:
+      serviceAccountName: k8sPanelSA
+      containers:
+        - name: k8s-panel-pod
+          image: wangchuang/k8spanel:latest
+          resources:
+            limits:
+              memory: 1000MiB
+              cpu: 500m
+            requests:
+              memory: 1000MiB
+              cpu: 500m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name:  k8s-panel-svc
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: k8sPanel
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: k8sPanelSA
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: cluster-k8sPanel-role
+rules:
+  - apiGroups: [""]
+    resources: ["pods","deployment"]
+    verbs: ["get", "list", "watch", "update","patch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: cluster-k8sPanel-binding
+subjects:
+  - kind: User
+    name: "k8sPanelSA"
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: cluster-k8sPanel-role
+  apiGroup: rbac.authorization.k8s.io

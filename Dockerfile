@@ -1,4 +1,4 @@
-FROM node:19.9.0-alpine3.18 AS web_builder
+FROM node:20.18.1-bullseye  AS web_builder
 
 WORKDIR /app
 COPY . /app
