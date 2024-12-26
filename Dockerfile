@@ -9,7 +9,7 @@ FROM golang:1.22.10 AS go_builder
 
 WORKDIR /app
 COPY . /app
-RUN  go build -o server .
+RUN GOARCH=amd64 GOOS=linux go build -o server .
 
 FROM alpine:3.21.0
 WORKDIR /app
