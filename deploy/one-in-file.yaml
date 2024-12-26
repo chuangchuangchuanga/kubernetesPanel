@@ -18,11 +18,11 @@ spec:
           image: wangchuang/k8spanel:latest
           resources:
             limits:
-              memory: 1000MiB
-              cpu: 500m
+              memory: "1000MiB"
+              cpu: "500m"
             requests:
-              memory: 1000MiB
-              cpu: 500m
+              memory: "1000MiB"
+              cpu: "500m"
 ---
 apiVersion: v1
 kind: Service
