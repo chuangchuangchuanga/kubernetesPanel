@@ -56,7 +56,7 @@ rules:
     resources: ["pods","namespaces"]
     verbs: ["get", "list", "watch", "update","patch"]
   - apiGroups: ["apps"]
-    resources: [ "deployment" ]
+    resources: [ "deployments" ]
     verbs: [ "get", "list", "watch", "update","patch" ]
 ---
 kind: ClusterRoleBinding
