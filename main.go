@@ -18,7 +18,7 @@ func main() {
 	r.Use(middlewares.GlobalExceptionHandler())
 	apiGroup := r.Group("/api")
 	r.Static("/assets", "/app/web")
-	r.GET("/*path", func(c *gin.Context) {
+	r.NoRoute(func(c *gin.Context) {
 		c.File("/app/web/index.html")
 	})
 	routes.KubernetsRoute(apiGroup)
