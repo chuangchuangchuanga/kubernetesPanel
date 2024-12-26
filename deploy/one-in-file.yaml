@@ -58,8 +58,7 @@ metadata:
   name: cluster-k8sPanel-binding
 subjects:
   - kind: ServiceAccount
-    name: "k8s-panel-sa"
-    apiGroup: rbac.authorization.k8s.io
+    name: k8s-panel-sa
 roleRef:
   kind: ClusterRole
   name: cluster-k8s-panel-role
