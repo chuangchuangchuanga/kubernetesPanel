@@ -6,13 +6,13 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: k8sPanel
+      app: k8s-panel
   template:
     metadata:
       labels:
-        app: k8sPanel
+        app: k8s-panel
     spec:
-      serviceAccountName: k8sPanelSA
+      serviceAccountName: k8s-panel-sa
       containers:
         - name: k8s-panel-pod
           image: wangchuang/k8spanel:latest
