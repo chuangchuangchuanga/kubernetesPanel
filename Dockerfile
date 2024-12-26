@@ -9,10 +9,11 @@ FROM golang:1.22.10 AS go_builder
 
 WORKDIR /app
 COPY . /app
-RUN GOARCH=amd64 GOOS=linux go build -o server .
+RUN  go build -o server .
 
 FROM alpine:3.21.0
 WORKDIR /app
+RUN apk add --no-cache libc6-compat
 COPY --from=web_builder /app/web/dist  /app/web
 COPY --from=go_builder /app/server /app/
 
