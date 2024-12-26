@@ -41,12 +41,12 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: k8sPanelSA
+  name: k8s-panel-sa
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: cluster-k8sPanel-role
+  name: cluster-k8s-panel-role
 rules:
   - apiGroups: [""]
     resources: ["pods","deployment"]
@@ -58,9 +58,9 @@ metadata:
   name: cluster-k8sPanel-binding
 subjects:
   - kind: User
-    name: "k8sPanelSA"
+    name: "k8s-panel-sa"
     apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: ClusterRole
-  name: cluster-k8sPanel-role
+  name: cluster-k8s-panel-role
   apiGroup: rbac.authorization.k8s.io
