@@ -53,7 +53,7 @@ metadata:
   name: cluster-k8s-panel-role
 rules:
   - apiGroups: [""]
-    resources: ["pods","deployment"]
+    resources: ["pods","deployment","namespace"]
     verbs: ["get", "list", "watch", "update","patch"]
 ---
 kind: ClusterRoleBinding
