@@ -19,7 +19,7 @@ func main() {
 	apiGroup := r.Group("/api")
 	r.Static("/", "/app/web")
 	r.GET("/", func(c *gin.Context) {
-		c.File("app/web/index.html")
+		c.File("/app/web/index.html")
 	})
 	routes.KubernetsRoute(apiGroup)
 	r.Run(":8080")
