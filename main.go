@@ -17,7 +17,7 @@ func main() {
 	r := gin.Default()
 	r.Use(middlewares.GlobalExceptionHandler())
 	apiGroup := r.Group("/api")
-	r.Static("/static", "/app/web")
+	r.Static("/assets", "/app/web")
 	r.GET("/", func(c *gin.Context) {
 		c.File("/app/web/index.html")
 	})
