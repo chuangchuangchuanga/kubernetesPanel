@@ -17,6 +17,7 @@ spec:
       containers:
         - name: k8s-panel-pod
           image: wangchuang/k8spanel:latest
+          imagePullPolicy: Always
           resources:
             limits:
               memory: "1000Mi"
