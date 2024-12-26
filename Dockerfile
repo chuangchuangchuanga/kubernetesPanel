@@ -1,4 +1,19 @@
-FROM ubuntu:latest
-LABEL authors="mailw"
+FROM node:19.9.0-alpine3.18 AS web_builder
 
-ENTRYPOINT ["top", "-b"]
+WORKDIR /app
+COPY . /app
+
+RUN cd /app/web && npm install && npm run build
+
+FROM golang:1.22.10 AS go_builder
+
+WORKDIR /app
+COPY . /app
+RUN  go build -o /app/server
+
+FROM alpine:3.21.0
+WORKDIR /app
+COPY --from=web_builder /app/web/dist  /app/web
+COPY --from=go_builder /app/server /app/server
+
+CMD ["/app/server"]
