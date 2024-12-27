@@ -20,7 +20,7 @@ func main() {
 
 	r := gin.Default()
 	r.Use(middlewares.GlobalExceptionHandler())
-	r.Use(middlewares.Serve("/", middlewares.EmbedFolder(f, "/app/web/assets")))
+	r.Use(middlewares.Serve("/", middlewares.EmbedFolder(f, "web/assets")))
 	r.NoRoute(func(c *gin.Context) {
 		data, err := f.ReadFile("/app/web/index.html")
 		if err != nil {
