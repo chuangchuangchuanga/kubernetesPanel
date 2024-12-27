@@ -2,11 +2,14 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	ownInformers "kubernetesPanel/informers"
 	"kubernetesPanel/middlewares"
 	routes "kubernetesPanel/route"
+	"log"
 	"net/http"
+	"os"
 )
 
 type SharedService struct {
@@ -22,6 +25,11 @@ func main() {
 	r.Use(middlewares.GlobalExceptionHandler())
 	r.Use(middlewares.Serve("/", middlewares.EmbedFolder(f, "web/assets")))
 	r.NoRoute(func(c *gin.Context) {
+		currentDir, err := os.Getwd()
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("Current working directory:", currentDir)
 		data, err := f.ReadFile("web/index.html")
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
