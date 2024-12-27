@@ -22,7 +22,7 @@ func main() {
 	r.Use(middlewares.GlobalExceptionHandler())
 	r.Use(middlewares.Serve("/", middlewares.EmbedFolder(f, "web/assets")))
 	r.NoRoute(func(c *gin.Context) {
-		data, err := f.ReadFile("/app/web/index.html")
+		data, err := f.ReadFile("web/index.html")
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
