@@ -36,5 +36,5 @@ spec:
 
 ## 截图
 ![使用截图](https://github.com/user-attachments/assets/3f0303a0-157b-4600-840e-1962d0b5f68e)
-![使用截图](https://github.com/user-attachments/assets/1f11e84d-4c74-49d1-bf05-6399632d859d)
+![使用截图](https://github.com/user-attachments/assets/f28750de-de55-4504-9c4c-af05ea935235)
 ![使用截图](https://github.com/user-attachments/assets/08a8b385-1007-4571-a317-f289d0ec4094)
