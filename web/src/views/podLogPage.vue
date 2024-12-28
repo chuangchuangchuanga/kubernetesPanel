@@ -145,7 +145,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100vh; /* 父容器高度 */
-  background-color: RGB(67,67,67);
+  background-color: #ffffff;
   overflow-y: auto;
 }
 
