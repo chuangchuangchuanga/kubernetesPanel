@@ -90,7 +90,7 @@ export default {
     },
 
     connectWebSocket() {
-      const currentUrl = window.location.href.split('?')[0];
+      const currentUrl = window.location.host;
       this.socket = new WebSocket("ws://"+currentUrl+"/api/getpodlogs")
       const urlParams = new URLSearchParams(window.location.search);
       const namespace = urlParams.get('nameSpace');
