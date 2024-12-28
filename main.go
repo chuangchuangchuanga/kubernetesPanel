@@ -17,7 +17,7 @@ func main() {
 	r := gin.Default()
 	r.Use(middlewares.GlobalExceptionHandler())
 	r.Static("/assets", "./web/assets")
-	r.LoadHTMLGlob("web/index.html")
+	r.LoadHTMLFiles("./web/index.html")
 	r.NoRoute(func(c *gin.Context) {
 		c.HTML(200, "./web/index.html", nil)
 	})
