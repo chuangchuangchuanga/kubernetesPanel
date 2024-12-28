@@ -1,6 +1,7 @@
 # KubernetesPanel介绍
 KubernetesPanel 是一个基于 Kubernetes 的监控面板，用于实时监控 Kubernetes 集群中的资源使用情况、容器状态、节点状态等。
 
+# 后面会根据实际需要开发更多页面
 ## 快速开始
 ```kubernetes apply -f https://raw.githubusercontent.com/chuangchuangchuanga/kubernetesPanel/refs/heads/main/deploy/one-in-file.yaml```
 
