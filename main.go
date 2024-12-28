@@ -7,10 +7,6 @@ import (
 	routes "kubernetesPanel/route"
 )
 
-type SharedService struct {
-	Data string
-}
-
 func main() {
 	ownInformers.InitInformerManager()
 
@@ -19,7 +15,7 @@ func main() {
 	r.Static("/assets", "./web/assets")
 	r.LoadHTMLFiles("./web/index.html")
 	r.NoRoute(func(c *gin.Context) {
-		c.HTML(200, "./web/index.html", nil)
+		c.HTML(200, "index.html", nil)
 	})
 	apiGroup := r.Group("/api")
 	routes.KubernetsRoute(apiGroup)
