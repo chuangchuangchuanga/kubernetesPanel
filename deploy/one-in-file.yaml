@@ -53,7 +53,7 @@ metadata:
   name: cluster-k8s-panel-role
 rules:
   - apiGroups: [""]
-    resources: ["pods","namespaces"]
+    resources: ["pods","namespaces","pods/log"]
     verbs: ["get", "list", "watch", "update","patch"]
   - apiGroups: ["apps"]
     resources: [ "deployments" ]
