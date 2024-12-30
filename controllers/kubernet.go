@@ -166,14 +166,9 @@ func GetPodLogsHandler(c *gin.Context) {
 
 	// 启动一个 goroutine，用于读取 Pod 日志流的每一行，并将其发送到广播通道
 	go func() {
-		i := 0
 		scanner := bufio.NewScanner(podLogs) // 使用 Scanner 逐行读取
 		for scanner.Scan() {
-
 			if scanner.Scan() {
-				i++
-				fmt.Printf("发送了行数是:%+v", i)
-				fmt.Println(scanner.Text())
 				// 将每一行日志发送到 broadcast 通道
 				broadcast <- scanner.Text()
 			} else {
