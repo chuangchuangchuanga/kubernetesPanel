@@ -8,7 +8,7 @@ const podLogPage = () => import('@/views/podLogPage.vue');
 
 const routes = [
     {
-        path: "/kubernetes",
+        path: "/",
         name: "Kubernetes",
         component: DefaultLayout,
         meta: {title: 'Kubernetes'},
